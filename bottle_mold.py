@@ -8,7 +8,7 @@ License: MIT (see LICENSE for details)
 """
 
 __author__ = 'James Burke'
-__version__ = '0.0.2'
+__version__ = '0.0.1.dev0'
 __license__ = 'MIT'
 
 import bottle
