@@ -28,14 +28,14 @@ logger = logging.getLogger(__name__)
 
 class Mold(bottle.Bottle):
 
-    def __init__(self, cors=None, orm=None, database_config={}):
+    def __init__(self, cors=None, orm=None, connection_string=None):
         #catchall=False if ENV == 'test' else True
         bottle.Bottle.__init__(self, False)
        
         # create bottle sqlalchemy plugin
         if orm in SUPPORTED_ORM:
             if orm == 'sqlalchemy':
-                SqlAlchemy(**database_config)
+                SqlAlchemy(connection_string)
 
         # Enable CORS
         if cors:
@@ -62,24 +62,21 @@ class EnableCors(object):
 
 
 
-class SqlAlchemy():
-    def __init__(self, host, port, database, user, password):
+class SqlAlchemy(object):
+    def __init__(self, connection_string):
         import sqlalchemy
         from sqlalchemy import create_engine
         from bottle.ext import sqlalchemy as bottle_sqlalchemy
 
-        engine = create_engine("postgresql://{user}:{password}@{host}:{port}/{database}".\
-            format(host=host,
-                   port=port,
-                   database=database,
-                   user=user,
-                   password=password), echo=False)
+        engine = create_engine("connection_string", echo=False)
         self.install(bottle_sqlalchemy.Plugin(engine, keyword="db"))
 
 
     def alchemyencoder(self, obj):
         """
         JSON encoder function for SQLAlchemy special classes.
+         - timestamps
+         - decimals
         """
         if isinstance(obj, datetime.date):
             try:
