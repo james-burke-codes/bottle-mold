@@ -17,7 +17,7 @@ setup(
     author=bottle_mold.__author__,
     author_email='peregrinius@gmail.com',
     url='https://github.com/peregrinius/bottle-mold',
-    py_modules=['bottle-mold'],
+    py_modules=['bottle_mold'],
     scripts=['bottle_mold.py'],
     license='MIT',
     platforms='any',
