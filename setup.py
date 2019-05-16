@@ -6,18 +6,18 @@ from setuptools import setup
 if sys.version_info < (2, 7):
     raise NotImplementedError("Sorry, you need at least Python 2.7 or Python 3.2+ to use.")
 
-import mold
+import bottle_mold
 
 setup(name='bottle-mold',
-      version=mold.__version__,
+      version=bottle_mold.__version__,
       description='Remove the boilerplate template from your bottle web services.',
-      long_description=mold.__doc__,
+      long_description=bottle_mold.__doc__,
       long_description_content_type="text/markdown",
-      author=mold.__author__,
+      author=bottle_mold.__author__,
       author_email='peregrinius@gmail.com',
       url='',
       py_modules=['bottle-mold'],
-      scripts=['mold.py'],
+      scripts=['bottle_mold.py'],
       license='MIT',
       platforms='any',
       classifiers=['Development Status :: 4 - Beta',
