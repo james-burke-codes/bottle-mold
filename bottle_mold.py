@@ -3,13 +3,12 @@
 """
 Bottle-mold removes the need to repeat boilerplate code for your bottle services.
 Python Standard Library.
-Homepage and documentation: http://bottlepy.org/
 Copyright (c) 2019, James Burke.
 License: MIT (see LICENSE for details)
 """
 
 __author__ = 'James Burke'
-__version__ = '0.1-dev'
+__version__ = '0.1.1-dev'
 __license__ = 'MIT'
 
 import bottle
