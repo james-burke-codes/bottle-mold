@@ -8,7 +8,7 @@ License: MIT (see LICENSE for details)
 """
 
 __author__ = 'James Burke'
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 __license__ = 'MIT'
 
 import bottle
@@ -68,7 +68,7 @@ class SqlAlchemy(object):
         from sqlalchemy import create_engine
         from bottle.ext import sqlalchemy as bottle_sqlalchemy
 
-        engine = create_engine("connection_string", echo=False)
+        engine = create_engine(connection_string, echo=False)
         self.install(bottle_sqlalchemy.Plugin(engine, keyword="db"))
 
 
