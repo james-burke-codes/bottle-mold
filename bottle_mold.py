@@ -8,7 +8,7 @@ License: MIT (see LICENSE for details)
 """
 
 __author__ = 'James Burke'
-__version__ = '0.0.2.dev0'
+__version__ = '0.0.3.dev0'
 __license__ = 'MIT'
 
 import bottle
@@ -33,9 +33,19 @@ class Mold(bottle.Bottle):
         bottle.Bottle.__init__(self, False)
        
         # create bottle sqlalchemy plugin
-        if os.environ["DATABASE_ORM"] in SUPPORTED_ORM:
-            if orm == 'sqlalchemy':
-                SqlAlchemy()
+        if os.environ["DATABASE_ORM"] not in SUPPORTED_ORM:
+            raise Exception("Unsupported ORM - {}".format(os.environ["DATABASE_ORM"]))
+        elif os.environ["DATABASE_ORM"] == 'sqlalchemy':
+            import sqlalchemy
+            from sqlalchemy import create_engine
+            from bottle.ext import sqlalchemy as bottle_sqlalchemy
+
+            engine = create_engine(os.environ['DATABASE_CONNECTION_STRING'],
+                echo=False
+            )
+            self.install(bottle_sqlalchemy.Plugin(engine, keyword="db"))
+
+            self.alchemyencoder = alchemyencoder
 
         # Enable CORS
         if os.environ["CORS_URL"]:
@@ -61,31 +71,17 @@ class EnableCors(object):
         return _enable_cors
 
 
-
-class SqlAlchemy(object):
-
-    def __init__(self):
-        import sqlalchemy
-        from sqlalchemy import create_engine
-        from bottle.ext import sqlalchemy as bottle_sqlalchemy
-
-        engine = create_engine(os.environ['DATABASE_CONNECTION_STRING'],
-            echo=False
-        )
-        self.install(bottle_sqlalchemy.Plugin(engine, keyword="db"))
-
-
-    def alchemyencoder(self, obj):
-        """
-        JSON encoder function for SQLAlchemy special classes.
-         - timestamps
-         - decimals
-        """
-        if isinstance(obj, datetime.date):
-            try:
-                utcoffset = obj.utcoffset() or datetime.timedelta(0)
-                return (obj - utcoffset).strftime('%Y-%m-%d %H:%M:%S')
-            except AttributeError:
-                return obj.strftime('%Y-%m-%d')
-        elif isinstance(obj, decimal.Decimal):
-            return float(obj)
+def alchemyencoder(self, obj):
+    """
+    JSON encoder function for SQLAlchemy special classes.
+     - timestamps
+     - decimals
+    """
+    if isinstance(obj, datetime.date):
+        try:
+            utcoffset = obj.utcoffset() or datetime.timedelta(0)
+            return (obj - utcoffset).strftime('%Y-%m-%d %H:%M:%S')
+        except AttributeError:
+            return obj.strftime('%Y-%m-%d')
+    elif isinstance(obj, decimal.Decimal):
+        return float(obj)
