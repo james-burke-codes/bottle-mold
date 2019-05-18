@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 class Mold(bottle.Bottle):
 
-    def __init__(self, cors=None, orm=None):
+    def __init__(self):
         #catchall=False if ENV == 'test' else True
         bottle.Bottle.__init__(self, False)
        
@@ -39,7 +39,7 @@ class Mold(bottle.Bottle):
 
         # Enable CORS
         if os.environ["CORS_URL"]:
-            self.install(EnableCors(cors=cors))
+            self.install(EnableCors())
 
 
 class EnableCors(object):
@@ -47,7 +47,7 @@ class EnableCors(object):
     api = 2
 
     def apply(self, fn, context):
-        def _enable_cors(cors, *args, **kwargs):
+        def _enable_cors(*args, **kwargs):
             # set CORS headers
             bottle.response.headers['Access-Control-Allow-Origin'] = os.environ["CORS_URL"]
             bottle.response.headers['Access-Control-Allow-Methods'] = "GET, POST, PUT, DELETE, OPTIONS"
