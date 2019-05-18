@@ -47,6 +47,8 @@ class Mold(bottle.Bottle):
 
             self.alchemyencoder = alchemyencoder
 
+            self.template = bottle.template
+
         # Enable CORS
         if os.environ["CORS_URL"]:
             self.install(EnableCors())
