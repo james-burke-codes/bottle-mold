@@ -22,8 +22,7 @@ setup(
     license='MIT',
     platforms='any',
     install_requires = [
-        'bottle >=0.9',
-        'bottle-sqlalchemy'
+        'bottle >=0.9'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
