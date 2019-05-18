@@ -8,7 +8,7 @@ License: MIT (see LICENSE for details)
 """
 
 __author__ = 'James Burke'
-__version__ = '0.0.1.dev0'
+__version__ = '0.0.2.dev0'
 __license__ = 'MIT'
 
 import bottle
@@ -28,17 +28,17 @@ logger = logging.getLogger(__name__)
 
 class Mold(bottle.Bottle):
 
-    def __init__(self, cors=None, orm=None, connection_string=None):
+    def __init__(self, cors=None, orm=None):
         #catchall=False if ENV == 'test' else True
         bottle.Bottle.__init__(self, False)
        
         # create bottle sqlalchemy plugin
-        if orm in SUPPORTED_ORM:
+        if os.environ["DATABASE_ORM"] in SUPPORTED_ORM:
             if orm == 'sqlalchemy':
-                SqlAlchemy(connection_string)
+                SqlAlchemy()
 
         # Enable CORS
-        if cors:
+        if os.environ["CORS_URL"]:
             self.install(EnableCors(cors=cors))
 
 
@@ -47,7 +47,7 @@ class EnableCors(object):
     api = 2
 
     def apply(self, fn, context):
-        def _enable_cors(url, *args, **kwargs):
+        def _enable_cors(cors, *args, **kwargs):
             # set CORS headers
             bottle.response.headers['Access-Control-Allow-Origin'] = os.environ["CORS_URL"]
             bottle.response.headers['Access-Control-Allow-Methods'] = "GET, POST, PUT, DELETE, OPTIONS"
@@ -63,12 +63,15 @@ class EnableCors(object):
 
 
 class SqlAlchemy(object):
-    def __init__(self, connection_string):
+
+    def __init__(self):
         import sqlalchemy
         from sqlalchemy import create_engine
         from bottle.ext import sqlalchemy as bottle_sqlalchemy
 
-        engine = create_engine(connection_string, echo=False)
+        engine = create_engine(os.environ['DATABASE_CONNECTION_STRING'],
+            echo=False
+        )
         self.install(bottle_sqlalchemy.Plugin(engine, keyword="db"))
 
 
