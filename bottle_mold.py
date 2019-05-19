@@ -29,8 +29,7 @@ logger = logging.getLogger(__name__)
 class Mold(bottle.Bottle):
 
     def __init__(self):
-        #catchall=False if ENV == 'test' else True
-        bottle.Bottle.__init__(self, False)
+        bottle.Bottle.__init__(self, catchall=True)
        
         # create bottle sqlalchemy plugin
         if os.environ["DATABASE_ORM"] not in SUPPORTED_ORM:
@@ -48,6 +47,8 @@ class Mold(bottle.Bottle):
             self.alchemyencoder = alchemyencoder
 
             self.template = bottle.template
+            self.TEMPLATE_PATH = bottle.TEMPLATE_PATH
+            self.static_file = bottle.static_file
 
         # Enable CORS
         if os.environ["CORS_URL"]:
