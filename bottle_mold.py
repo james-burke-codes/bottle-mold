@@ -20,7 +20,7 @@ import os
 import sys
 
 
-SUPPORTED_ORM = ('sqlalchemy',)
+SUPPORTED_ORM = (None, 'sqlalchemy',)
 
 
 logger = logging.getLogger(__name__)
@@ -32,12 +32,13 @@ class Mold(bottle.Bottle):
         bottle.Bottle.__init__(self, catchall=True)
        
         # create bottle sqlalchemy plugin
-        if os.environ["DATABASE_ORM"] not in SUPPORTED_ORM:
-            raise Exception("Unsupported ORM - {}".format(os.environ["DATABASE_ORM"]))
-        elif os.environ["DATABASE_ORM"] == 'sqlalchemy':
+        if os.environ.get("DATABASE_ORM") not in SUPPORTED_ORM:
+            raise Exception("Unsupported ORM - {}".format(os.environ.get("DATABASE_ORM")))
+        elif os.environ.get("DATABASE_ORM") == 'sqlalchemy':
             import sqlalchemy
             from sqlalchemy import create_engine
             from bottle.ext import sqlalchemy as bottle_sqlalchemy
+            from sqlalchemy.ext.declarative import declarative_base
 
             engine = create_engine(os.environ['DATABASE_CONNECTION_STRING'],
                 echo=False
@@ -46,13 +47,15 @@ class Mold(bottle.Bottle):
 
             self.alchemyencoder = alchemyencoder
 
-            self.template = bottle.template
-            self.TEMPLATE_PATH = bottle.TEMPLATE_PATH
-            self.static_file = bottle.static_file
+            self.base = declarative_base()
 
         # Enable CORS
-        if os.environ["CORS_URL"]:
+        if os.environ.get("CORS_URL"):
             self.install(EnableCors())
+
+        self.template = bottle.template
+        self.TEMPLATE_PATH = bottle.TEMPLATE_PATH
+        self.static_file = bottle.static_file
 
 
 class EnableCors(object):
