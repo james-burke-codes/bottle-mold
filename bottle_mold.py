@@ -19,12 +19,9 @@ import datetime
 import os
 import sys
 
-
 SUPPORTED_ORM = (None, 'sqlalchemy',)
 
-
 logger = logging.getLogger(__name__)
-
 
 class Mold(bottle.Bottle):
 
